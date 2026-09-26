@@ -28,9 +28,12 @@ docker compose down
 
 ## Rails コマンド
 
+ホスト側の PowerShell には Ruby / Rails をインストールしていないため、`rails` を直接実行できません。
+プロジェクトのディレクトリから `docker compose exec web bin/rails` を使います。
+
 ```sh
 docker compose exec web bin/rails console
-docker compose exec web bin/rails generate model Task title:string completed:boolean
+docker compose exec web bin/rails generate model Todo text:string
 docker compose exec web bin/rails db:migrate
 docker compose exec web bin/rails test
 ```
