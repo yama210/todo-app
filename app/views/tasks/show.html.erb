@@ -1,0 +1,6 @@
+<h1><%= @task.text %></h1>
+
+
+<%= link_to "Edit", edit_task_path(@task) %>
+<%= link_to "Back", tasks_path %>
+<%= button_to "Delete", @task, method: :delete,data: {turbo_confirm:"まじで消すの？"}%>
