@@ -43,8 +43,9 @@
 /config/deploy*.yml
 /.kamal
 
-# Ignore development files
-/.devcontainer
+# Ignore development container configuration
+/compose.yaml
+/docker/
 
 # Ignore Docker-related files
 /.dockerignore

@@ -1,0 +1,56 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    ports:
+      - "127.0.0.1:3000:3000"
+    environment:
+      RAILS_ENV: development
+      DB_HOST: db
+      DB_USERNAME: todo
+      DB_PASSWORD: todo_dev_password
+    volumes:
+      - .:/rails
+      - bundle:/usr/local/bundle
+      - rails_tmp:/rails/tmp
+    depends_on:
+      db:
+        condition: service_healthy
+    command:
+      - bash
+      - -c
+      - |
+        set -e
+        bundle check || bundle install --jobs 4
+        rm -f tmp/pids/server.pid
+        ruby bin/rails db:prepare
+        exec ruby bin/rails server -b 0.0.0.0
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/up"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 180s
+
+  db:
+    image: mysql:8.4
+    environment:
+      MYSQL_ROOT_PASSWORD: root_dev_password
+      MYSQL_DATABASE: todo_development
+      MYSQL_USER: todo
+      MYSQL_PASSWORD: todo_dev_password
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./docker/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "MYSQL_PWD=$$MYSQL_PASSWORD mysql -h 127.0.0.1 -u$$MYSQL_USER -D $$MYSQL_DATABASE -e 'SELECT 1'"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+      start_period: 30s
+
+volumes:
+  bundle:
+  rails_tmp:
+  mysql_data:
