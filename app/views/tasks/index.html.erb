@@ -1,0 +1,11 @@
+<h1>Todos</h1>
+
+<%= link_to "New Todo", new_task_path %>
+
+<div id="todos">
+  <% @tasks.each do |task| %>
+    <div>
+      <%= link_to task.text, task_path(task.id) %>
+    </div>
+  <% end %>
+</div>
